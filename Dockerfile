@@ -11,11 +11,12 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY poetry.lock pyproject.toml ./
-RUN pip install poetry==1.1.15 poetry-core==1.0.9 && \
+RUN pip install poetry-core==1.0.8 poetry==1.1.15 && \
     poetry config virtualenvs.in-project true && \
     poetry install --no-dev
 
 COPY . ./
 
-CMD poetry run alembic upgrade head && \
+CMD until nc -z db 5432; do echo "Waiting for postgres..."; sleep 1; done && \
+    poetry run alembic upgrade head && \
     poetry run uvicorn --host=0.0.0.0 app.main:app
