@@ -14,7 +14,8 @@ COPY poetry.lock pyproject.toml ./
 RUN pip install "setuptools<70" && \
     pip install poetry-core==1.0.8 poetry==1.1.15 && \
     poetry config virtualenvs.in-project true && \
-    poetry install --no-dev
+    poetry install --no-dev && \
+    poetry run pip install "setuptools<70"
 
 COPY . ./
 

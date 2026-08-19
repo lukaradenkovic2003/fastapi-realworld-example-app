@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator  # <--- 1. instrumentator import
 
 from app.api.errors.http_error import http_error_handler
 from app.api.errors.validation_error import http422_error_handler
@@ -38,6 +39,9 @@ def get_application() -> FastAPI:
     application.add_exception_handler(RequestValidationError, http422_error_handler)
 
     application.include_router(api_router, prefix=settings.api_prefix)
+
+    # Initialize of Prometheus metrics endpoint
+    Instrumentator().instrument(application).expose(application, endpoint="/metrics")
 
     return application
 
