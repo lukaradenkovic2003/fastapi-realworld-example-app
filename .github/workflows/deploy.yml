@@ -17,24 +17,16 @@ jobs:
       - name: Configure Docker Insecure Registry
         run: |
           echo '{ "insecure-registries":["${{ secrets.NEXUS_REGISTRY }}"] }' | sudo tee /etc/docker/daemon.json
-          sudo systemctl restart docker   
+          sudo systemctl restart docker  
 
-      - name: Login to Nexus Docker Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ secrets.NEXUS_REGISTRY }}
-          username: ${{ secrets.NEXUS_USER }}
-          password: ${{ secrets.NEXUS_PASSWORD }}
-
-      - name: Build and push image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: Dockerfile
-          push: true
-          tags: |
-            ${{ secrets.NEXUS_REGISTRY }}/fastapi-realworld-example-app:latest
-            ${{ secrets.NEXUS_REGISTRY }}/fastapi-realworld-example-app:${{ github.sha }}
+      - name: Login, Build and Push to Nexus Docker Registry
+        run: |
+          echo "${{ secrets.NEXUS_PASSWORD }}" | docker login ${{ secrets.NEXUS_REGISTRY }} -u "${{ secrets.NEXUS_USER }}" --password-stdin
+          
+          docker build -t ${{ secrets.NEXUS_REGISTRY }}/fastapi-realworld-example-app:latest -t ${{ secrets.NEXUS_REGISTRY }}/fastapi-realworld-example-app:${{ github.sha }} .
+          
+          docker push ${{ secrets.NEXUS_REGISTRY }}/fastapi-realworld-example-app:latest
+          docker push ${{ secrets.NEXUS_REGISTRY }}/fastapi-realworld-example-app:${{ github.sha }}
 
       - name: Send Slack Notification on Success
         if: success()
