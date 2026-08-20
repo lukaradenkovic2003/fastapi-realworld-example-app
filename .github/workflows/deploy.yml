@@ -16,10 +16,11 @@ jobs:
 
       - name: Configure Docker Insecure Registry
         run: |
-          echo "Using registry from secret: ${{ secrets.NEXUS_REGISTRY }}"
-          echo '{ "insecure-registries":["${{ secrets.NEXUS_REGISTRY }}"] }' | sudo tee /etc/docker/daemon.json
-          cat /etc/docker/daemon.json
+          echo "Writing daemon.json..."
+          echo "{\"insecure-registries\": [\"${{ secrets.NEXUS_REGISTRY }}\"]}" | sudo tee /etc/docker/daemon.json
           sudo systemctl restart docker
+          # Dodatna provera statusa demona
+          sudo systemctl show --property=Environment docker
 
       - name: Login, Build and Push to Nexus Docker Registry
         run: |
