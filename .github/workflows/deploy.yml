@@ -17,11 +17,7 @@ jobs:
       - name: Configure Docker Insecure Registry
         run: |
           echo '{ "insecure-registries":["${{ secrets.NEXUS_REGISTRY }}"] }' | sudo tee /etc/docker/daemon.json
-          sudo systemctl restart docker  
-
-      - name: Test connectivity to Nexus registry
-        run: |
-          curl -v http://${{ secrets.NEXUS_REGISTRY }}/v2/    
+          sudo systemctl restart docker   
 
       - name: Login to Nexus Docker Registry
         uses: docker/login-action@v2
