@@ -37,7 +37,7 @@ jobs:
           status: success
           text: "🚀 Uspešno izgrađena FastAPI aplikacija i poslata u Nexus!\nCommit: ${{ github.sha }}"
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_CICD_WEBHOOK_URL }}
 
       - name: Send Slack Notification on Failure
         if: failure()
@@ -46,4 +46,4 @@ jobs:
           status: failure
           text: "❌ Došlo je do greške tokom CI/CD pipeline-a za FastAPI aplikaciju!"
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_CICD_WEBHOOK_URL }}
